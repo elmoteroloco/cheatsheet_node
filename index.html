@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="es" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node.js Cheat Sheet</title>
+    <style>
+        :root {
+            --bg-color: #fdfdfd;
+            --text-color: #333;
+            --primary-color: #43853d;
+            --code-bg: #2b2b2b;
+            --code-color: #f1f1f1;
+            --section-bg-odd: #f7f9fc;
+            --section-bg-even: #ffffff;
+            --border-color: #e0e0e0;
+            --link-color: #0366d6;
+            --note-color: #57606a;
+        }
+
+        :root.dark-mode {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --primary-color: #b8860b; /* Ámbar para elementos destacados */
+            --code-bg: #161b22;
+            --code-color: #c9d1d9;
+            --section-bg-odd: #161b22;
+            --section-bg-even: #0d1117;
+            --border-color: #30363d;
+            --link-color: #b8860b;
+            --note-color: var(--text-color);
+        }
+
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 1.5em;
+        }
+
+        h2 {
+            margin-top: 40px;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .back-to-top {
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--note-color);
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .back-to-top:hover {
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        section {
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid transparent; /* Remove border in favor of bg color difference */
+            margin-top: 25px;
+        }
+
+        section:nth-child(odd) {
+            background-color: var(--section-bg-odd);
+        }
+
+        section:nth-child(even) {
+            background-color: var(--section-bg-even);
+        }
+
+        /* --- Header Controls --- */
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background-color: var(--section-bg-odd);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .control-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+        }
+
+        #theme-toggle-icon {
+            display: inline-block;
+            font-style: normal;
+            font-size: 1.2em;
+        }
+
+        #pdf-download-icon {
+            display: inline-block;
+            font-style: normal;
+            font-size: 1.2em;
+        }
+
+
+        /* --- Index Styles --- */
+        #index-nav {
+            margin-bottom: 40px;
+        }
+
+        .index-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            padding: 0;
+            list-style: none;
+        }
+
+        .index-grid a {
+            display: block;
+            background-color: var(--section-bg-even);
+            color: var(--primary-color);
+            padding: 12px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .npm-link {
+            grid-column: 1 / -1;
+        }
+
+        .index-grid a:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* --- Content Styles --- */
+        p, dl {
+            margin-bottom: 1em;
+        }
+
+        .api-link {
+            font-style: italic;
+            font-size: 0.9em;
+            color: var(--note-color);
+        }
+        .api-link a, .description a {
+            color: var(--note-color);
+        }
+
+        .description {
+            font-style: italic;
+            color: var(--note-color);
+            background-color: var(--section-bg-odd);
+            padding: 10px 15px;
+            border-left: 3px solid var(--primary-color);
+            border-radius: 0 5px 5px 0;
+        }
+
+        .dark-mode .description {
+            background-color: rgba(184, 134, 11, 0.1);
+        }
+
+        .dark-mode .index-grid a:hover {
+            box-shadow: 0 0 8px rgba(184, 134, 11, 0.3);
+        }
+
+        code {
+            font-family: "Fira Code", "Courier New", Courier, monospace;
+            background-color: rgba(27,31,35,0.05);
+            padding: .2em .4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+        }
+
+        .dark-mode code {
+            background-color: rgba(184, 134, 11, 0.15);
+            color: var(--text-color);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-color);
+            padding: 16px;
+            overflow: auto;
+            border-radius: 6px;
+        }
+
+        pre code {
+            padding: 0;
+            margin: 0;
+            font-size: 100%;
+            background-color: transparent;
+        }
+
+        dl {
+            margin-left: 1em;
+        }
+
+        dt {
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 0.5em;
+        }
+
+        dd {
+            margin-left: 2em;
+            margin-bottom: 1.5em;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 40px 0;
+        }
+
+        .note {
+            font-size: 0.9em;
+            color: var(--note-color);
+            border-left: 3px solid #f0b429;
+            padding: 10px 15px;
+            background-color: #fffbdd;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .dark-mode .note {
+            border-left-color: #d29922;
+            background-color: rgba(210, 153, 34, 0.1);
+        }
+
+        .dark-mode dt {
+            color: var(--primary-color);
+        }
+
+        .sub-header {
+           margin-top: 2em;
+           margin-bottom: 1em;
+           font-weight: 600;
+           color: var(--text-color);
+       }
+
+       .dark-mode .sub-header {
+           color: var(--primary-color);
+       }
+
+       footer {
+           margin-top: 40px;
+           padding-top: 20px;
+           border-top: 1px solid var(--border-color);
+           text-align: right;
+           font-size: 0.8em;
+           color: var(--note-color);
+       }
+
+       footer a {
+           color: var(--primary-color);
+           text-decoration: none;
+       }
+
+       footer a:hover {
+           text-decoration: underline;
+       }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="main-header">
+        <h1>Node.js Cheat Sheet</h1>
+        <div class="header-controls">
+            <button id="theme-toggle" class="control-btn" title="Cambiar tema">
+                <i id="theme-toggle-icon">☾</i>
+            </button>
+            <a href="./Node.js Cheat Sheet - claro.pdf" download="Node.js Cheat Sheet - claro.pdf" id="pdf-download" class="control-btn" title="Descargar PDF">
+                <i id="pdf-download-icon">↓</i>
+            </a>
+        </div>
+    </header>
+
+    <nav id="index-nav">
+        <h2>Índice</h2>
+        <div class="index-grid">
+            <a href="#synopsis">Synopsis</a>
+            <a href="#global-objects">Global Objects</a>
+            <a href="#console">Console</a>
+            <a href="#timers">Timers</a>
+            <a href="#modules">Modules</a>
+            <a href="#process">Process</a>
+            <a href="#child-process">Child Process</a>
+            <a href="#util">Util</a>
+            <a href="#events">Events</a>
+            <a href="#stream">Stream</a>
+            <a href="#file-system">File System</a>
+            <a href="#path">Path</a>
+            <a href="#http">HTTP</a>
+            <a href="#url">URL</a>
+            <a href="#query-string">Query String</a>
+            <a href="#assert">Assert</a>
+            <a href="#os">OS</a>
+            <a href="#buffer">Buffer</a>
+            <a href="#npm" class="npm-link">NPM (Node Package Manager)</a>
+        </div>
+    </nav>
+
+    <hr>
+
+    <main>
+        <section id="synopsis">
+            <div class="section-header">
+                <h2>SYNOPSIS</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/synopsis.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/synopsis.html</a></p>
+            <pre><code class="language-javascript">var http = require('http');
+
+// Un ejemplo de un servidor web escrito con Node que responde con 'Hello World'.
+// Para ejecutarlo:
+// 1. Guardá este código en un archivo (ej: `example.js`).
+// 2. Desde la terminal, ejecutá: `node example.js`
+// 3. Abrí tu navegador en la dirección que indica la consola.
+http.createServer(function (request, response) {
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.end('Hello World\n');
+}).listen(8124);
+
+console.log('Servidor activo en http://127.0.0.1:8124/ ¡Abrilo en tu navegador!');</code></pre>
+        </section>
+
+        <section id="global-objects">
+            <div class="section-header">
+                <h2>GLOBAL OBJECTS</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/globals.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/globals.html</a></p>
+            <p class="description">En los navegadores, el ámbito de nivel superior es el ámbito global. Eso significa que en los navegadores, si estás en el ámbito global, <code>var algo</code> definirá una variable global. En Node esto es diferente. El ámbito de nivel superior no es el ámbito global; <code>var algo</code> dentro de un módulo de Node será local para ese módulo.</p>
+            <dl>
+                <dt><code>__filename</code></dt>
+                <dd>El nombre del archivo del código que se está ejecutando. (ruta absoluta)</dd>
+                <dt><code>__dirname</code></dt>
+                <dd>El nombre del directorio en el que reside el script que se está ejecutando actualmente. (ruta absoluta)</dd>
+                <dt><code>module</code></dt>
+                <dd>Una referencia al módulo actual. En particular, <code>module.exports</code> se usa para definir lo que un módulo exporta y pone a disposición a través de <code>require()</code>.</dd>
+                <dt><code>exports</code></dt>
+                <dd>Una referencia a <code>module.exports</code> que es más corta de tipear.</dd>
+                <dt><code>process</code></dt>
+                <dd>El objeto <code>process</code> es un objeto global y se puede acceder desde cualquier lugar. Es una instancia de <code>EventEmitter</code>.</dd>
+                <dt><code>Buffer</code></dt>
+                <dd>La clase <code>Buffer</code> es un tipo global para manejar datos binarios directamente.</dd>
+            </dl>
+        </section>
+
+        <section id="console">
+            <div class="section-header">
+                <h2>CONSOLE</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/console.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/console.html</a></p>
+            <dl>
+                <dt><code>console.log([data], [...])</code></dt>
+                <dd>Imprime en <code>stdout</code> con una nueva línea.</dd>
+                <dt><code>console.info([data], [...])</code></dt>
+                <dd>Igual que <code>console.log</code>.</dd>
+                <dt><code>console.error([data], [...])</code></dt>
+                <dd>Igual que <code>console.log</code> pero imprime en <code>stderr</code>.</dd>
+                <dt><code>console.warn([data], [...])</code></dt>
+                <dd>Igual que <code>console.error</code>.</dd>
+                <dt><code>console.dir(obj)</code></dt>
+                <dd>Usa <code>util.inspect</code> en <code>obj</code> e imprime la cadena resultante en <code>stdout</code>.</dd>
+                <dt><code>console.time(label)</code></dt>
+                <dd>Marca un tiempo.</dd>
+                <dt><code>console.timeEnd(label)</code></dt>
+                <dd>Finaliza el temporizador, registra la salida.</dd>
+                <dt><code>console.trace(label)</code></dt>
+                <dd>Imprime un <code>stack trace</code> en <code>stderr</code> de la posición actual.</dd>
+                <dt><code>console.assert(expression, [message])</code></dt>
+                <dd>Igual que <code>assert.ok()</code>, donde si la expresión se evalúa como falsa, lanza un <code>AssertionError</code> con el mensaje.</dd>
+            </dl>
+        </section>
+
+        <section id="timers">
+            <div class="section-header">
+                <h2>TIMERS</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/timers.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/timers.html</a></p>
+            <dl>
+                <dt><code>setTimeout(callback, delay, [arg], [...])</code></dt>
+                <dd>Para programar la ejecución de un <code>callback</code> de una sola vez después de <code>delay</code> milisegundos. Opcionalmente, también podés pasar argumentos al <code>callback</code>.</dd>
+                <dt><code>clearTimeout(t)</code></dt>
+                <dd>Detiene un temporizador que fue creado previamente con <code>setTimeout()</code>.</dd>
+                <dt><code>setInterval(callback, delay, [arg], [...])</code></dt>
+                <dd>Para programar la ejecución repetida de un <code>callback</code> cada <code>delay</code> milisegundos. Opcionalmente, también podés pasar argumentos al <code>callback</code>.</dd>
+                <dt><code>clearInterval(t)</code></dt>
+                <dd>Detiene un temporizador que fue creado previamente con <code>setInterval()</code>.</dd>
+                <dt><code>setImmediate(callback, [arg], [...])</code></dt>
+                <dd>Para programar la ejecución "inmediata" de un <code>callback</code> después de los <code>callbacks</code> de eventos de I/O y antes de <code>setTimeout</code> y <code>setInterval</code>.</dd>
+                <dt><code>clearImmediate(immediateObject)</code></dt>
+                <dd>Detiene un temporizador que fue creado previamente con <code>setImmediate()</code>.</dd>
+                <dt><code>unref()</code></dt>
+                <dd>Te permite crear un temporizador que está activo pero si es el único elemento que queda en el <code>event loop</code>, Node no mantendrá el programa en ejecución.</dd>
+                <dt><code>ref()</code></dt>
+                <dd>Si previamente hiciste <code>unref()</code> a un temporizador, podés llamar a <code>ref()</code> para solicitar explícitamente que el temporizador mantenga el programa abierto.</dd>
+            </dl>
+        </section>
+
+        <section id="modules">
+            <div class="section-header">
+                <h2>MODULES</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/modules.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/modules.html</a></p>
+            <dl>
+                <dt><code>var module = require('./module.js')</code></dt>
+                <dd>Carga el módulo <code>module.js</code> en el mismo directorio.</dd>
+                <dt><code>module.require('./another_module.js')</code></dt>
+                <dd>Carga <code>another_module</code> como si <code>require()</code> fuera llamado desde el propio módulo.</dd>
+                <dt><code>module.id</code></dt>
+                <dd>El identificador para el módulo. Típicamente, es el nombre de archivo completamente resuelto.</dd>
+                <dt><code>module.filename</code></dt>
+                <dd>El nombre de archivo completamente resuelto del módulo.</dd>
+                <dt><code>module.loaded</code></dt>
+                <dd>Indica si el módulo ha terminado de cargarse o si está en proceso de carga.</dd>
+                <dt><code>module.parent</code></dt>
+                <dd>El módulo que requirió a este.</dd>
+                <dt><code>module.children</code></dt>
+                <dd>Los objetos de módulo requeridos por este.</dd>
+            </dl>
+            <pre><code class="language-javascript">exports.area = function (r) {
+  return Math.PI * r * r;
+};
+
+// Para exportar una función (como un constructor) o un objeto completo
+// en una sola asignación, usá `module.exports` en lugar de `exports`.
+module.exports = function(width) {
+  return {
+    area: function() {
+      return width * width;
+    }
+  };
+}</code></pre>
+        </section>
+
+        <section id="process">
+            <div class="section-header">
+                <h2>PROCESS</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/process.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/process.html</a></p>
+            <dl>
+                <dt><code>process.on('exit', function(code) {})</code></dt>
+                <dd>Se emite cuando el proceso está a punto de salir.</dd>
+                <dt><code>process.on('uncaughtException', function(err) {})</code></dt>
+                <dd>Se emite cuando una excepción llega hasta el <code>event loop</code>. (No debería usarse como reemplazo de <code>try/catch</code> porque deja la aplicación en un estado inestable e impredecible).</dd>
+                <dt><code>process.stdout</code></dt>
+                <dd>Un <code>stream</code> de escritura a <code>stdout</code>.</dd>
+                <dt><code>process.stderr</code></dt>
+                <dd>Un <code>stream</code> de escritura a <code>stderr</code>.</dd>
+                <dt><code>process.stdin</code></dt>
+                <dd>Un <code>stream</code> de lectura para <code>stdin</code>.</dd>
+                <dt><code>process.argv</code></dt>
+                <dd>Un array que contiene los argumentos de la línea de comandos. Por ejemplo, si ejecutás <code>node mi_app.js --user=pepe</code>, el valor de <code>process.argv</code> sería <code>['/ruta/a/node', '/ruta/a/mi_app.js', '--user=pepe']</code>.</dd>
+                <dt><code>process.env</code></dt>
+                <dd>Un objeto que contiene el entorno del usuario.</dd>
+                <dt><code>process.execPath</code></dt>
+                <dd>La ruta absoluta del ejecutable que inició el proceso.</dd>
+                <dt><code>process.execArgv</code></dt>
+                <dd>El conjunto de opciones de línea de comandos específicas de Node del ejecutable que inició el proceso.</dd>
+                <dt><code>process.arch</code></dt>
+                <dd>La arquitectura del procesador en la que se está ejecutando: 'arm', 'ia32', o 'x64'.</dd>
+                <dt><code>process.config</code></dt>
+                <dd>Un objeto que contiene la representación en JavaScript de las opciones de configuración que se usaron para compilar el ejecutable de Node actual.</dd>
+                <dt><code>process.pid</code></dt>
+                <dd>El PID del proceso.</dd>
+                <dt><code>process.platform</code></dt>
+                <dd>La plataforma en la que se está ejecutando: 'darwin', 'freebsd', 'linux', 'sunos' o 'win32'.</dd>
+                <dt><code>process.title</code></dt>
+                <dd>Getter/setter para establecer lo que se muestra en 'ps'.</dd>
+                <dt><code>process.version</code></dt>
+                <dd>Una propiedad compilada que expone <code>NODE_VERSION</code>.</dd>
+                <dt><code>process.versions</code></dt>
+                <dd>Una propiedad que expone las cadenas de versión de Node y sus dependencias.</dd>
+                <dt><code>process.abort()</code></dt>
+                <dd>Hace que Node emita una señal de aborto. Esto hará que Node salga y genere un archivo <code>core</code>.</dd>
+                <dt><code>process.chdir(dir)</code></dt>
+                <dd>Cambia el directorio de trabajo actual del proceso o lanza una excepción si falla.</dd>
+                <dt><code>process.cwd()</code></dt>
+                <dd>Devuelve el directorio de trabajo actual del proceso.</dd>
+                <dt><code>process.exit([code])</code></dt>
+                <dd>Termina el proceso con el código especificado. Si se omite, <code>exit</code> usa el código de 'éxito' 0.</dd>
+                <dt><code>process.getgid()</code></dt>
+                <dd>Obtiene la identidad de grupo del proceso.</dd>
+                <dt><code>process.setgid(id)</code></dt>
+                <dd>Establece la identidad de grupo del proceso.</dd>
+                <dt><code>process.getuid()</code></dt>
+                <dd>Obtiene la identidad de usuario del proceso.</dd>
+                <dt><code>process.setuid(id)</code></dt>
+                <dd>Establece la identidad de usuario del proceso.</dd>
+                <dt><code>process.getgroups()</code></dt>
+                <dd>Devuelve un array con los IDs de grupo suplementarios.</dd>
+                <dt><code>process.setgroups(grps)</code></dt>
+                <dd>Establece los IDs de grupo suplementarios.</dd>
+                <dt><code>process.initgroups(user, extra_grp)</code></dt>
+                <dd>Lee <code>/etc/group</code> e inicializa la lista de acceso de grupos, usando todos los grupos de los que el usuario es miembro.</dd>
+                <dt><code>process.kill(pid, [signal])</code></dt>
+                <dd>Envía una señal a un proceso. <code>pid</code> es el ID del proceso y <code>signal</code> es la cadena que describe la señal a enviar.</dd>
+                <dt><code>process.memoryUsage()</code></dt>
+                <dd>Devuelve un objeto que describe el uso de memoria del proceso de Node medido en bytes.</dd>
+                <dt><code>process.nextTick(callback)</code></dt>
+                <dd>En el siguiente ciclo del <code>event loop</code>, llama a este <code>callback</code>.</dd>
+                <dt><code>process.maxTickDepth</code></dt>
+                <dd>Los <code>callbacks</code> pasados a <code>process.nextTick</code> generalmente se llamarán al final del flujo de ejecución actual, y por lo tanto son aproximadamente tan rápidos como llamar a una función de forma síncrona.</dd>
+                <dt><code>process.umask([mask])</code></dt>
+                <dd>Establece o lee la máscara de creación de modo de archivo del proceso.</dd>
+                <dt><code>process.uptime()</code></dt>
+                <dd>Número de segundos que Node ha estado funcionando.</dd>
+                <dt><code>process.hrtime()</code></dt>
+                <dd>Devuelve el tiempo real de alta resolución actual en una tupla <code>[segundos, nanosegundos]</code>.</dd>
+            </dl>
+        </section>
+
+        <section id="child-process">
+            <div class="section-header">
+                <h2>CHILD PROCESS</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/child_process.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/child_process.html</a></p>
+            <p class="note">Nota: La diferencia principal entre <code>spawn</code> y <code>exec</code> es cómo manejan la salida. <code>spawn</code> es ideal para streams de datos largos (como un <code>ping</code> o procesar un video), mientras que <code>exec</code> es más simple para comandos que devuelven un resultado completo al final (como <code>ls -lh</code>), ya que usa un buffer.</p>
+            <p class="description">Node provee una facilidad <code>popen</code> tridireccional a través del módulo <code>child_process</code>. Es posible transmitir datos a través de <code>stdin</code>, <code>stdout</code> y <code>stderr</code> de un proceso hijo de una manera completamente no bloqueante.</p>
+            <dl>
+                <dt><code>ChildProcess</code></dt>
+                <dd>Clase. <code>ChildProcess</code> es un <code>EventEmitter</code>.</dd>
+                <dt><code>child.stdin</code></dt>
+                <dd>Un <code>Writable Stream</code> que representa el <code>stdin</code> del proceso hijo.</dd>
+                <dt><code>child.stdout</code></dt>
+                <dd>Un <code>Readable Stream</code> que representa el <code>stdout</code> del proceso hijo.</dd>
+                <dt><code>child.stderr</code></dt>
+                <dd>Un <code>Readable Stream</code> que representa el <code>stderr</code> del proceso hijo.</dd>
+                <dt><code>child.pid</code></dt>
+                <dd>El PID del proceso hijo.</dd>
+                <dt><code>child.connected</code></dt>
+                <dd>Si <code>.connected</code> es falso, ya no es posible enviar mensajes.</dd>
+                <dt><code>child.kill([signal])</code></dt>
+                <dd>Envía una señal al proceso hijo.</dd>
+                <dt><code>child.send(message, [sendHandle])</code></dt>
+                <dd>Cuando se usa <code>child_process.fork()</code> se puede escribir al hijo usando <code>child.send(message, [sendHandle])</code> y los mensajes se reciben mediante un evento 'message' en el hijo.</dd>
+                <dt><code>child.disconnect()</code></dt>
+                <dd>Cierra el canal IPC entre el padre y el hijo, permitiendo que el hijo salga de forma controlada una vez que no haya otras conexiones que lo mantengan vivo.</dd>
+                <dt><code>child_process.spawn(command, [args], [options])</code></dt>
+                <dd>Lanza un nuevo proceso con el comando dado, con argumentos de línea de comandos en <code>args</code>. Si se omite, <code>args</code> por defecto es un Array vacío.</dd>
+                <dt><code>child_process.exec(command, [options], callback)</code></dt>
+                <dd>Ejecuta un comando en un shell y almacena en búfer la salida.</dd>
+                <dt><code>child_process.execFile(file, [args], [options], [callback])</code></dt>
+                <dd>Ejecuta un archivo ejecutable, almacenando en búfer la salida.</dd>
+                <dt><code>child_process.fork(modulePath, [args], [options])</code></dt>
+                <dd>Este es un caso especial de la funcionalidad <code>spawn()</code> para generar procesos de Node. Además de tener todos los métodos de una instancia normal de <code>ChildProcess</code>, el objeto devuelto tiene un canal de comunicación incorporado.</dd>
+            </dl>
+        </section>
+
+        <section id="util">
+            <div class="section-header">
+                <h2>UTIL</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/util.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/util.html</a></p>
+            <p class="description">Estas funciones están en el módulo 'util'. Usá <code>require('util')</code> para acceder a ellas.</p>
+            <dl>
+                <dt><code>util.format(format, [...])</code></dt>
+                <dd>Devuelve una cadena formateada usando el primer argumento como un formato tipo <code>printf</code> (%s, %d, %j).</dd>
+                <dt><code>util.debug(string)</code></dt>
+                <dd>Una función de salida síncrona. Bloqueará el proceso y mostrará la cadena inmediatamente en <code>stderr</code>.</dd>
+                <dt><code>util.error([...])</code></dt>
+                <dd>Igual que <code>util.debug()</code> excepto que mostrará todos los argumentos inmediatamente en <code>stderr</code>.</dd>
+                <dt><code>util.puts([...])</code></dt>
+                <dd>Una función de salida síncrona. Bloqueará el proceso y mostrará todos los argumentos en <code>stdout</code> con nuevas líneas después de cada argumento.</dd>
+                <dt><code>util.print([...])</code></dt>
+                <dd>Una función de salida síncrona. Bloqueará el proceso, convertirá cada argumento a una cadena y luego lo mostrará en <code>stdout</code> (sin nuevas líneas).</dd>
+                <dt><code>util.log(string)</code></dt>
+                <dd>Muestra la salida con una marca de tiempo en <code>stdout</code>.</dd>
+                <dt><code>util.inspect(object, [opts])</code></dt>
+                <dd>Devuelve una representación en cadena de un objeto, útil para depurar. (opciones: showHidden, depth, colors, customInspect).</dd>
+                <dt><code>util.isArray(object)</code></dt>
+                <dd>Devuelve <code>true</code> si el "objeto" dado es un Array. <code>false</code> en caso contrario.</dd>
+                <dt><code>util.isRegExp(object)</code></dt>
+                <dd>Devuelve <code>true</code> si el "objeto" dado es una RegExp. <code>false</code> en caso contrario.</dd>
+                <dt><code>util.isDate(object)</code></dt>
+                <dd>Devuelve <code>true</code> si el "objeto" dado es una fecha (Date). <code>false</code> en caso contrario.</dd>
+                <dt><code>util.isError(object)</code></dt>
+                <dd>Devuelve <code>true</code> si el "objeto" dado es un Error. <code>false</code> en caso contrario.</dd>
+                <dt><code>util.promisify(fn)</code></dt>
+                <dd>Toma una función cuyo último argumento es un <code>callback</code> y devuelve una versión que retorna promesas.</dd>
+                <dt><code>util.inherits(constructor, superConstructor)</code></dt>
+                <dd>Hereda los métodos del prototipo de un constructor a otro.</dd>
+            </dl>
+        </section>
+
+        <section id="events">
+            <div class="section-header">
+                <h2>EVENTS</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/events.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/events.html</a></p>
+            <p class="description">Todos los objetos que emiten eventos son instancias de <code>events.EventEmitter</code>. Podés acceder a este módulo haciendo: <code>require("events")</code>. Para acceder a la clase <code>EventEmitter</code>, usá <code>require('events').EventEmitter</code>. Todos los <code>EventEmitters</code> emiten el evento 'newListener' cuando se agregan nuevos <code>listeners</code> y 'removeListener' cuando se elimina uno.</p>
+            <dl>
+                <dt><code>emitter.addListener(event, listener)</code></dt>
+                <dd>Agrega un <code>listener</code> al final del array de <code>listeners</code> para el evento especificado.</dd>
+                <dt><code>emitter.on(event, listener)</code></dt>
+                <dd>Igual que <code>emitter.addListener()</code>.</dd>
+                <dt><code>emitter.once(event, listener)</code></dt>
+                <dd>Agrega un <code>listener</code> de una sola vez para el evento. Este <code>listener</code> se invoca solo la próxima vez que se dispara el evento, después de lo cual se elimina.</dd>
+                <dt><code>emitter.removeListener(event, listener)</code></dt>
+                <dd>Elimina un <code>listener</code> del array de <code>listeners</code> para el evento especificado.</dd>
+                <dt><code>emitter.removeAllListeners([event])</code></dt>
+                <dd>Elimina todos los <code>listeners</code>, o aquellos del evento especificado.</dd>
+                <dt><code>emitter.setMaxListeners(n)</code></dt>
+                <dd>Por defecto, los <code>EventEmitters</code> imprimirán una advertencia si se agregan más de 10 <code>listeners</code> para un evento en particular.</dd>
+                <dt><code>emitter.listeners(event)</code></dt>
+                <dd>Devuelve un array de <code>listeners</code> para el evento especificado.</dd>
+                <dt><code>emitter.emit(event, [arg1], [arg2], [...])</code></dt>
+                <dd>Ejecuta cada uno de los <code>listeners</code> en orden con los argumentos proporcionados. Devuelve <code>true</code> si el evento tenía <code>listeners</code>, <code>false</code> en caso contrario.</dd>
+                <dt><code>EventEmitter.listenerCount(emitter, event)</code></dt>
+                <dd>Devuelve el número de <code>listeners</code> para un evento dado.</dd>
+            </dl>
+        </section>
+
+        <section id="stream">
+            <h2>STREAM</h2>
+            <p class="api-link"><a href="http://nodejs.org/api/stream.html">http://nodejs.org/api/stream.html</a></p>
+            <p class="description">Un <code>stream</code> es una interfaz abstracta implementada por varios objetos en Node. Por ejemplo, una petición a un servidor HTTP es un <code>stream</code>, al igual que <code>stdout</code>. Los <code>streams</code> son de lectura, de escritura, o ambos. Todos los <code>streams</code> son instancias de <code>EventEmitter</code>.</p>
+
+            <h3>Readable Stream</h3>
+            <p class="description">La interfaz de <code>stream</code> <code>Readable</code> (de lectura) es la abstracción para una fuente de datos de la que estás leyendo. En otras palabras, los datos salen de un <code>stream</code> <code>Readable</code>. Un <code>stream</code> <code>Readable</code> no comenzará a emitir datos hasta que indiques que estás listo para recibirlos. Ejemplos de <code>streams</code> de lectura incluyen: respuestas http en el cliente, peticiones http en el servidor, <code>streams</code> de lectura de <code>fs</code>, <code>streams</code> de <code>zlib</code>, <code>streams</code> de <code>crypto</code>, <code>sockets</code> tcp, <code>stdout</code> y <code>stderr</code> de procesos hijos, <code>process.stdin</code>.</p>
+            <dl>
+                <dt><code>readable.on('readable', function() {})</code></dt>
+                <dd>Cuando un trozo de datos puede ser leído del <code>stream</code>, emitirá un evento 'readable'.</dd>
+                <dt><code>readable.on('data', function(chunk) {})</code></dt>
+                <dd>Si adjuntás un <code>listener</code> para el evento 'data', cambiará el <code>stream</code> a modo "fluido" (flowing mode), y los datos se pasarán a tu manejador tan pronto como estén disponibles.</dd>
+                <dt><code>readable.on('end', function() {})</code></dt>
+                <dd>Este evento se dispara cuando no habrá más datos para leer.</dd>
+                <dt><code>readable.on('close', function() {})</code></dt>
+                <dd>Se emite cuando el recurso subyacente (por ejemplo, el descriptor de archivo de respaldo) ha sido cerrado. No todos los <code>streams</code> emitirán esto.</dd>
+                <dt><code>readable.on('error', function() {})</code></dt>
+                <dd>Se emite si hubo un error al recibir datos.</dd>
+                <dt><code>readable.read([size])</code></dt>
+                <dd>El método <code>read()</code> extrae algunos datos del búfer interno y los devuelve. Si no hay datos disponibles, devolverá <code>null</code>. Este método solo debe llamarse en modo no fluido. En modo fluido, este método se llama automáticamente hasta que se vacía el búfer interno.</dd>
+                <dt><code>readable.setEncoding(encoding)</code></dt>
+                <dd>Llama a esta función para que el <code>stream</code> devuelva cadenas de la codificación especificada en lugar de objetos <code>Buffer</code>.</dd>
+                <dt><code>readable.resume()</code></dt>
+                <dd>Este método hará que el <code>stream</code> de lectura reanude la emisión de eventos 'data'.</dd>
+                <dt><code>readable.pause()</code></dt>
+                <dd>Este método hará que un <code>stream</code> en modo fluido deje de emitir eventos 'data'.</dd>
+                <dt><code>readable.pipe(destination, [options])</code></dt>
+                <dd>Este método extrae todos los datos de un <code>stream</code> de lectura y los escribe en el destino proporcionado, gestionando automáticamente el flujo para que el destino no se vea abrumado por un <code>stream</code> de lectura rápido.</dd>
+                <dt><code>readable.unpipe([destination])</code></dt>
+                <dd>Este método eliminará los "ganchos" configurados por una llamada <code>pipe()</code> anterior. Si no se especifica el destino, se eliminan todas las tuberías (<code>pipes</code>).</dd>
+                <dt><code>readable.unshift(chunk)</code></dt>
+                <dd>Esto es útil en ciertos casos en los que un <code>stream</code> está siendo consumido por un <code>parser</code>, que necesita "des-consumir" algunos datos que ha extraído de forma optimista de la fuente, para que el <code>stream</code> pueda pasarse a otra parte.</dd>
+            </dl>
+
+            <h3 class="sub-header">Writable Stream</h3>
+            <p class="description">La interfaz de <code>stream</code> <code>Writable</code> (de escritura) es una abstracción para un destino al que estás escribiendo datos. Ejemplos de <code>streams</code> de escritura incluyen: peticiones http en el cliente, respuestas http en el servidor, <code>streams</code> de escritura de <code>fs</code>, <code>streams</code> de <code>zlib</code>, <code>streams</code> de <code>crypto</code>, <code>sockets</code> tcp, <code>stdin</code> de procesos hijos, <code>process.stdout</code>, <code>process.stderr</code>.</p>
+            <dl>
+                <dt><code>writable.write(chunk, [encoding], [callback])</code></dt>
+                <dd>Este método escribe algunos datos en el sistema subyacente y llama al <code>callback</code> proporcionado una vez que los datos han sido manejados por completo.</dd>
+                <dt><code>writer.once('drain', write)</code></dt>
+                <dd>Si una llamada a <code>writable.write(chunk)</code> devuelve <code>false</code>, el evento 'drain' indicará cuándo es apropiado comenzar a escribir más datos en el <code>stream</code>.</dd>
+                <dt><code>writable.end([chunk], [encoding], [callback])</code></dt>
+                <dd>Llama a este método cuando no se escribirán más datos en el <code>stream</code>.</dd>
+                <dt><code>writer.on('finish', function() {})</code></dt>
+                <dd>Cuando se ha llamado al método <code>end()</code> y todos los datos se han volcado al sistema subyacente, se emite este evento.</dd>
+                <dt><code>writer.on('pipe', function(src) {})</code></dt>
+                <dd>Se emite cada vez que se llama al método <code>pipe()</code> en un <code>stream</code> de lectura, agregando este <code>writable</code> a su conjunto de destinos.</dd>
+                <dt><code>writer.on('unpipe', function(src) {})</code></dt>
+                <dd>Se emite cada vez que se llama al método <code>unpipe()</code> en un <code>stream</code> de lectura, eliminando este <code>writable</code> de su conjunto de destinos.</dd>
+                <dt><code>writer.on('error', function(src) {})</code></dt>
+                <dd>Se emite si hubo un error al escribir o canalizar datos.</dd>
+            </dl>
+
+            <h3 class="sub-header">Duplex and Transform Streams</h3>
+            <p class="description">Los <code>streams</code> <code>Duplex</code> son <code>streams</code> que implementan tanto la interfaz <code>Readable</code> como la <code>Writable</code>. Ver arriba para su uso. Ejemplos de <code>streams</code> <code>Duplex</code> incluyen: <code>sockets</code> tcp, <code>streams</code> de <code>zlib</code>, <code>streams</code> de <code>crypto</code>.</p>
+            <p class="description">Los <code>streams</code> <code>Transform</code> son <code>streams</code> <code>Duplex</code> donde la salida se calcula de alguna manera a partir de la entrada. Implementan tanto la interfaz <code>Readable</code> como la <code>Writable</code>. Ver arriba para su uso. Ejemplos de <code>streams</code> <code>Transform</code> incluyen: <code>streams</code> de <code>zlib</code>, <code>streams</code> de <code>crypto</code>.</p>
+        </section>
+
+        <section id="file-system">
+            <div class="section-header">
+                <h2>FILE SYSTEM</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/fs.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/fs.html</a></p>
+            <p class="description">Para usar este módulo, hacé <code>require('fs')</code>. Todos los métodos tienen formas asíncronas y síncronas.</p>
+            <dl>
+                <dt><code>fs.rename(oldPath, newPath, callback)</code></dt>
+                <dd>Renombrado asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.renameSync(oldPath, newPath)</code></dt>
+                <dd>Renombrado síncrono.</dd>
+                <dt><code>fs.ftruncate(fd, len, callback)</code></dt>
+                <dd>Truncado asíncrono de archivo (<code>ftruncate</code>). No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.ftruncateSync(fd, len)</code></dt>
+                <dd>Truncado síncrono de archivo (<code>ftruncate</code>).</dd>
+                <dt><code>fs.truncate(path, len, callback)</code></dt>
+                <dd>Truncado asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.truncateSync(path, len)</code></dt>
+                <dd>Truncado síncrono.</dd>
+                <dt><code>fs.chown(path, uid, gid, callback)</code></dt>
+                <dd><code>chown</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.chownSync(path, uid, gid)</code></dt>
+                <dd><code>chown</code> síncrono.</dd>
+                <dt><code>fs.fchown(fd, uid, gid, callback)</code></dt>
+                <dd><code>fchown</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.fchownSync(fd, uid, gid)</code></dt>
+                <dd><code>fchown</code> síncrono.</dd>
+                <dt><code>fs.lchown(path, uid, gid, callback)</code></dt>
+                <dd><code>lchown</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.lchownSync(path, uid, gid)</code></dt>
+                <dd><code>lchown</code> síncrono.</dd>
+                <dt><code>fs.chmod(path, mode, callback)</code></dt>
+                <dd><code>chmod</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.chmodSync(path, mode)</code></dt>
+                <dd><code>chmod</code> síncrono.</dd>
+                <dt><code>fs.fchmod(fd, mode, callback)</code></dt>
+                <dd><code>fchmod</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.fchmodSync(fd, mode)</code></dt>
+                <dd><code>fchmod</code> síncrono.</dd>
+                <dt><code>fs.lchmod(path, mode, callback)</code></dt>
+                <dd><code>lchmod</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.lchmodSync(path, mode)</code></dt>
+                <dd><code>lchmod</code> síncrono.</dd>
+                <dt><code>fs.stat(path, callback)</code></dt>
+                <dd><code>stat</code> asíncrono. El <code>callback</code> recibe dos argumentos (err, stats) donde <code>stats</code> es un objeto <code>fs.Stats</code>.</dd>
+                <dt><code>fs.statSync(path)</code></dt>
+                <dd><code>stat</code> síncrono. Devuelve una instancia de <code>fs.Stats</code>.</dd>
+                <dt><code>fs.lstat(path, callback)</code></dt>
+                <dd><code>lstat</code> asíncrono. El <code>callback</code> recibe dos argumentos (err, stats) donde <code>stats</code> es un objeto <code>fs.Stats</code>. <code>lstat()</code> es idéntico a <code>stat()</code>, excepto que si la ruta es un enlace simbólico, se obtienen las estadísticas del enlace mismo, no del archivo al que se refiere.</dd>
+                <dt><code>fs.lstatSync(path)</code></dt>
+                <dd><code>lstat</code> síncrono. Devuelve una instancia de <code>fs.Stats</code>.</dd>
+                <dt><code>fs.fstat(fd, callback)</code></dt>
+                <dd><code>fstat</code> asíncrono. El <code>callback</code> recibe dos argumentos (err, stats) donde <code>stats</code> es un objeto <code>fs.Stats</code>. <code>fstat()</code> es idéntico a <code>stat()</code>, excepto que el archivo a analizar se especifica por el descriptor de archivo <code>fd</code>.</dd>
+                <dt><code>fs.fstatSync(fd)</code></dt>
+                <dd><code>fstat</code> síncrono. Devuelve una instancia de <code>fs.Stats</code>.</dd>
+                <dt><code>fs.link(srcpath, dstpath, callback)</code></dt>
+                <dd><code>link</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.linkSync(srcpath, dstpath)</code></dt>
+                <dd><code>link</code> síncrono.</dd>
+                <dt><code>fs.symlink(srcpath, dstpath, [type], callback)</code></dt>
+                <dd><code>symlink</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción. El argumento <code>type</code> puede ser 'dir', 'file' o 'junction' (por defecto es 'file') y solo está disponible en Windows (se ignora en otras plataformas).</dd>
+                <dt><code>fs.symlinkSync(srcpath, dstpath, [type])</code></dt>
+                <dd><code>symlink</code> síncrono.</dd>
+                <dt><code>fs.readlink(path, callback)</code></dt>
+                <dd><code>readlink</code> asíncrono. El <code>callback</code> recibe dos argumentos (err, linkString).</dd>
+                <dt><code>fs.readlinkSync(path)</code></dt>
+                <dd><code>readlink</code> síncrono. Devuelve el valor de cadena del enlace simbólico.</dd>
+                <dt><code>fs.unlink(path, callback)</code></dt>
+                <dd><code>unlink</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.unlinkSync(path)</code></dt>
+                <dd><code>unlink</code> síncrono.</dd>
+                <dt><code>fs.realpath(path, [cache], callback)</code></dt>
+                <dd><code>realpath</code> asíncrono. El <code>callback</code> recibe dos argumentos (err, resolvedPath).</dd>
+                <dt><code>fs.realpathSync(path, [cache])</code></dt>
+                <dd><code>realpath</code> síncrono. Devuelve la ruta resuelta.</dd>
+                <dt><code>fs.rmdir(path, callback)</code></dt>
+                <dd><code>rmdir</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.rmdirSync(path)</code></dt>
+                <dd><code>rmdir</code> síncrono.</dd>
+                <dt><code>fs.mkdir(path, [mode], callback)</code></dt>
+                <dd><code>mkdir</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción. <code>mode</code> por defecto es 0777.</dd>
+                <dt><code>fs.mkdirSync(path, [mode])</code></dt>
+                <dd><code>mkdir</code> síncrono.</dd>
+                <dt><code>fs.readdir(path, callback)</code></dt>
+                <dd><code>readdir</code> asíncrono. Lee el contenido de un directorio. El <code>callback</code> recibe dos argumentos (err, files) donde <code>files</code> es un array de los nombres de los archivos en el directorio, excluyendo '.' y '..'.</dd>
+                <dt><code>fs.readdirSync(path)</code></dt>
+                <dd><code>readdir</code> síncrono. Devuelve un array de nombres de archivo, excluyendo '.' y '..'.</dd>
+                <dt><code>fs.close(fd, callback)</code></dt>
+                <dd><code>close</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.closeSync(fd)</code></dt>
+                <dd><code>close</code> síncrono.</dd>
+                <dt><code>fs.open(path, flags, [mode], callback)</code></dt>
+                <dd>Apertura de archivo asíncrona.</dd>
+                <dt><code>fs.openSync(path, flags, [mode])</code></dt>
+                <dd>Versión síncrona de <code>fs.open()</code>.</dd>
+                <dt><code>fs.utimes(path, atime, mtime, callback)</code></dt>
+                <dd>Cambia las marcas de tiempo del archivo referenciado por la ruta proporcionada.</dd>
+                <dt><code>fs.utimesSync(path, atime, mtime)</code></dt>
+                <dd>Versión síncrona de <code>fs.utimes()</code>.</dd>
+                <dt><code>fs.futimes(fd, atime, mtime, callback)</code></dt>
+                <dd>Cambia las marcas de tiempo de un archivo referenciado por el descriptor de archivo proporcionado.</dd>
+                <dt><code>fs.futimesSync(fd, atime, mtime)</code></dt>
+                <dd>Versión síncrona de <code>fs.futimes()</code>.</dd>
+                <dt><code>fs.fsync(fd, callback)</code></dt>
+                <dd><code>fsync</code> asíncrono. No se pasan argumentos al <code>callback</code> de finalización, salvo una posible excepción.</dd>
+                <dt><code>fs.fsyncSync(fd)</code></dt>
+                <dd><code>fsync</code> síncrono.</dd>
+                <dt><code>fs.write(fd, buffer, offset, length, position, callback)</code></dt>
+                <dd>Escribe el <code>buffer</code> en el archivo especificado por <code>fd</code>.</dd>
+                <dt><code>fs.writeSync(fd, buffer, offset, length, position)</code></dt>
+                <dd>Versión síncrona de <code>fs.write()</code>. Devuelve el número de bytes escritos.</dd>
+                <dt><code>fs.read(fd, buffer, offset, length, position, callback)</code></dt>
+                <dd>Lee datos del archivo especificado por <code>fd</code>.</dd>
+                <dt><code>fs.readSync(fd, buffer, offset, length, position)</code></dt>
+                <dd>Versión síncrona de <code>fs.read</code>. Devuelve el número de <code>bytesRead</code>.</dd>
+                <dt><code>fs.readFile(filename, [options], callback)</code></dt>
+                <dd>Lee de forma asíncrona todo el contenido de un archivo.</dd>
+                <dt><code>fs.readFileSync(filename, [options])</code></dt>
+                <dd>Versión síncrona de <code>fs.readFile</code>. Devuelve el contenido del <code>filename</code>. Si se especifica la opción de codificación, esta función devuelve una cadena. De lo contrario, devuelve un <code>buffer</code>.</dd>
+                <dt><code>fs.writeFile(filename, data, [options], callback)</code></dt>
+                <dd>Escribe datos de forma asíncrona en un archivo, reemplazando el archivo si ya existe. <code>data</code> puede ser una cadena o un <code>buffer</code>.</dd>
+                <dt><code>fs.writeFileSync(filename, data, [options])</code></dt>
+                <dd>La versión síncrona de <code>fs.writeFile</code>.</dd>
+                <dt><code>fs.appendFile(filename, data, [options], callback)</code></dt>
+                <dd>Agrega datos de forma asíncrona a un archivo, creando el archivo si aún no existe. <code>data</code> puede ser una cadena o un <code>buffer</code>.</dd>
+                <dt><code>fs.appendFileSync(filename, data, [options])</code></dt>
+                <dd>La versión síncrona de <code>fs.appendFile</code>.</dd>
+                <dt><code>fs.watch(filename, [options], [listener])</code></dt>
+                <dd>Vigila los cambios en <code>filename</code>, donde <code>filename</code> es un archivo o un directorio. El objeto devuelto es un <code>fs.FSWatcher</code>. El <code>callback</code> del <code>listener</code> recibe dos argumentos (event, filename). <code>event</code> es 'rename' o 'change', y <code>filename</code> es el nombre del archivo que desencadenó el evento.</dd>
+                <dt><code>fs.exists(path, callback)</code></dt>
+                <dd>Prueba si la ruta dada existe o no. (Obsoleto: no debería usarse porque puede generar condiciones de carrera. La alternativa recomendada es intentar abrir/acceder al archivo y manejar el error si no existe, por ejemplo con <code>fs.stat</code> o <code>fs.access</code>).</dd>
+                <dt><code>fs.existsSync(path)</code></dt>
+                <dd>Versión síncrona de <code>fs.exists</code>. (Obsoleto: ver <code>fs.exists</code> para más detalles. La alternativa es usar <code>try/catch</code> con <code>fs.statSync</code> o <code>fs.accessSync</code>).</dd>
+            </dl>
+
+            <h3>fs.Stats</h3>
+            <p class="description">Los objetos devueltos por <code>fs.stat()</code>, <code>fs.lstat()</code> y <code>fs.fstat()</code> y sus contrapartes síncronas son de este tipo.</p>
+            <dl>
+                <dt><code>stats.isFile()</code></dt>
+                <dd>Devuelve <code>true</code> si es un archivo.</dd>
+                <dt><code>stats.isDirectory()</code></dt>
+                <dd>Devuelve <code>true</code> si es un directorio.</dd>
+                <dt><code>stats.isBlockDevice()</code></dt>
+                <dd>Devuelve <code>true</code> si es un dispositivo de bloque.</dd>
+                <dt><code>stats.isCharacterDevice()</code></dt>
+                <dd>Devuelve <code>true</code> si es un dispositivo de caracteres.</dd>
+                <dt><code>stats.isSymbolicLink()</code></dt>
+                <dd>Devuelve <code>true</code> si es un enlace simbólico (solo válido con <code>fs.lstat()</code>).</dd>
+                <dt><code>stats.isFIFO()</code></dt>
+                <dd>Devuelve <code>true</code> si es una FIFO.</dd>
+                <dt><code>stats.isSocket()</code></dt>
+                <dd>Devuelve <code>true</code> si es un socket.</dd>
+            </dl>
+
+            <h3 class="sub-header">Streams de Archivos</h3>
+            <dl>
+                <dt><code>fs.createReadStream(path, [options])</code></dt>
+                <dd>Devuelve un nuevo objeto <code>ReadStream</code>.</dd>
+                <dt><code>fs.createWriteStream(path, [options])</code></dt>
+                <dd>Devuelve un nuevo objeto <code>WriteStream</code>.</dd>
+            </dl>
+        </section>
+
+        <section id="path">
+            <div class="section-header">
+                <h2>PATH</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/path.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/path.html</a></p>
+            <p class="description">Usá <code>require('path')</code> para usar este módulo. Este módulo contiene utilidades para manejar y transformar rutas de archivos. Casi todos estos métodos realizan solo transformaciones de cadenas. No se consulta al sistema de archivos para verificar si las rutas son válidas.</p>
+            <dl>
+                <dt><code>path.normalize(p)</code></dt>
+                <dd>Normaliza una ruta de cadena, ocupándose de las partes '..' y '.'.</dd>
+                <dt><code>path.join([path1], [path2], [...])</code></dt>
+                <dd>Une todos los argumentos y normaliza la ruta resultante.</dd>
+                <dt><code>path.resolve([from ...], to)</code></dt>
+                <dd>Resuelve 'to' a una ruta absoluta.</dd>
+                <dt><code>path.relative(from, to)</code></dt>
+                <dd>Resuelve la ruta relativa desde 'from' hasta 'to'.</dd>
+                <dt><code>path.dirname(p)</code></dt>
+                <dd>Devuelve el nombre del directorio de una ruta. Similar al comando <code>dirname</code> de Unix.</dd>
+                <dt><code>path.basename(p, [ext])</code></dt>
+                <dd>Devuelve la última porción de una ruta. Similar al comando <code>basename</code> de Unix.</dd>
+                <dt><code>path.extname(p)</code></dt>
+                <dd>Devuelve la extensión de la ruta, desde el último '.' hasta el final de la cadena en la última porción de la ruta.</dd>
+                <dt><code>path.sep</code></dt>
+                <dd>El separador de archivos específico de la plataforma. '\\' o '/'.</dd>
+                <dt><code>path.delimiter</code></dt>
+                <dd>El delimitador de ruta específico de la plataforma, ';' o ':'.</dd>
+            </dl>
+        </section>
+
+        <section id="http">
+            <h2>HTTP</h2>
+            <p class="api-link"><a href="http://nodejs.org/api/http.html">http://nodejs.org/api/http.html</a></p>
+            <p class="description">Para usar el servidor y cliente HTTP, se debe hacer <code>require('http')</code>.</p>
+
+            <h3>Propiedades y Métodos Globales</h3>
+            <dl>
+                <dt><code>http.STATUS_CODES</code></dt>
+                <dd>Una colección de todos los códigos de estado de respuesta HTTP estándar y la breve descripción de cada uno.</dd>
+                <dt><code>http.request(options, [callback])</code></dt>
+                <dd>Esta función permite emitir peticiones de forma transparente.</dd>
+                <dt><code>http.get(options, [callback])</code></dt>
+                <dd>Establece el método en GET y llama a <code>req.end()</code> automáticamente.</dd>
+            </dl>
+
+            <h3 class="sub-header">http.Server</h3>
+            <dl>
+                <dt><code>server = http.createServer([requestListener])</code></dt>
+                <dd>Devuelve un nuevo objeto de servidor web. El <code>requestListener</code> es una función que se agrega automáticamente al evento 'request'.</dd>
+                <dt><code>server.listen(port, [hostname], [backlog], [callback])</code></dt>
+                <dd>Comienza a aceptar conexiones en el puerto y <code>hostname</code> especificados.</dd>
+                <dt><code>server.listen(path, [callback])</code></dt>
+                <dd>Inicia un servidor de socket UNIX que escucha conexiones en la ruta dada.</dd>
+                <dt><code>server.listen(handle, [callback])</code></dt>
+                <dd>El objeto <code>handle</code> puede ser un servidor o un <code>socket</code> (cualquier cosa con un miembro <code>_handle</code> subyacente), o un objeto <code>{fd: &lt;n&gt;}</code>.</dd>
+                <dt><code>server.close([callback])</code></dt>
+                <dd>Impide que el servidor acepte nuevas conexiones.</dd>
+                <dt><code>server.setTimeout(msecs, callback)</code></dt>
+                <dd>Establece el valor de tiempo de espera para los <code>sockets</code> y emite un evento 'timeout' en el objeto <code>Server</code>, pasando el <code>socket</code> como argumento, si ocurre un tiempo de espera.</dd>
+                <dt><code>server.maxHeadersCount</code></dt>
+                <dd>Limita el número máximo de cabeceras entrantes, por defecto es 1000. Si se establece en 0, no se aplicará ningún límite.</dd>
+                <dt><code>server.timeout</code></dt>
+                <dd>El número de milisegundos de inactividad antes de que se presuma que un <code>socket</code> ha expirado.</dd>
+            </dl>
+
+            <h3 class="sub-header">Eventos del Servidor</h3>
+            <dl>
+                <dt><code>server.on('request', function (request, response) { })</code></dt>
+                <dd>Se emite cada vez que hay una petición.</dd>
+                <dt><code>server.on('connection', function (socket) { })</code></dt>
+                <dd>Cuando se establece una nueva conexión TCP.</dd>
+                <dt><code>server.on('close', function () { })</code></dt>
+                <dd>Se emite cuando el servidor se cierra.</dd>
+                <dt><code>server.on('checkContinue', function (request, response) { })</code></dt>
+                <dd>Se emite cada vez que se recibe una petición con un <code>http Expect: 100-continue</code>.</dd>
+                <dt><code>server.on('connect', function (request, socket, head) { })</code></dt>
+                <dd>Se emite cada vez que un cliente solicita un método http CONNECT.</dd>
+                <dt><code>server.on('upgrade', function (request, socket, head) { })</code></dt>
+                <dd>Se emite cada vez que un cliente solicita una actualización http.</dd>
+                <dt><code>server.on('clientError', function (exception, socket) { })</code></dt>
+                <dd>Si una conexión de cliente emite un evento 'error', se reenviará aquí.</dd>
+            </dl>
+
+            <h3 class="sub-header">http.ClientRequest</h3>
+            <dl>
+                <dt><code>request.write(chunk, [encoding])</code></dt>
+                <dd>Envía un trozo del cuerpo.</dd>
+                <dt><code>request.end([data], [encoding])</code></dt>
+                <dd>Finaliza el envío de la petición. Si alguna parte del cuerpo no se ha enviado, la enviará al <code>stream</code>.</dd>
+                <dt><code>request.abort()</code></dt>
+                <dd>Aborta una petición.</dd>
+                <dt><code>request.setTimeout(timeout, [callback])</code></dt>
+                <dd>Una vez que se asigna un <code>socket</code> a esta petición y se conecta, se llamará a <code>socket.setTimeout()</code>.</dd>
+                <dt><code>request.setNoDelay([noDelay])</code></dt>
+                <dd>Una vez que se asigna un <code>socket</code> a esta petición y se conecta, se llamará a <code>socket.setNoDelay()</code>.</dd>
+                <dt><code>request.setSocketKeepAlive([enable], [initialDelay])</code></dt>
+                <dd>Una vez que se asigna un <code>socket</code> a esta petición y se conecta, se llamará a <code>socket.setKeepAlive()</code>.</dd>
+            </dl>
+
+            <h3 class="sub-header">Eventos de la Petición (Request)</h3>
+            <dl>
+                <dt><code>request.on('response', function(response) { })</code></dt>
+                <dd>Se emite cuando se recibe una respuesta a esta petición. Este evento se emite solo una vez.</dd>
+                <dt><code>request.on('socket', function(socket) { })</code></dt>
+                <dd>Se emite después de que se asigna un <code>socket</code> a esta petición.</dd>
+                <dt><code>request.on('connect', function(response, socket, head) { })</code></dt>
+                <dd>Se emite cada vez que un servidor responde a una petición con un método CONNECT. Si no se escucha este evento, las conexiones de los clientes que reciban un método CONNECT se cerrarán.</dd>
+                <dt><code>request.on('upgrade', function(response, socket, head) { })</code></dt>
+                <dd>Se emite cada vez que un servidor responde a una petición con una actualización. Si no se escucha este evento, las conexiones de los clientes que reciban una cabecera de actualización se cerrarán.</dd>
+                <dt><code>request.on('continue', function() { })</code></dt>
+                <dd>Se emite cuando el servidor envía una respuesta HTTP '100 Continue', generalmente porque la petición contenía 'Expect: 100-continue'. Esta es una instrucción para que el cliente envíe el cuerpo de la petición.</dd>
+            </dl>
+
+            <h3 class="sub-header">http.ServerResponse</h3>
+            <dl>
+                <dt><code>response.write(chunk, [encoding])</code></dt>
+                <dd>Envía un trozo del cuerpo de la respuesta. Si se llama a este método y no se ha llamado a <code>response.writeHead()</code>, cambiará al modo de cabeceras implícitas y las enviará.</dd>
+                <dt><code>response.writeContinue()</code></dt>
+                <dd>Envía un mensaje HTTP/1.1 100 Continue al cliente, indicando que se debe enviar el cuerpo de la petición.</dd>
+                <dt><code>response.writeHead(statusCode, [reasonPhrase], [headers])</code></dt>
+                <dd>Envía una cabecera de respuesta a la petición.</dd>
+                <dt><code>response.setTimeout(msecs, callback)</code></dt>
+                <dd>Establece el valor de tiempo de espera del <code>Socket</code> en <code>msecs</code>. Si se proporciona un <code>callback</code>, se agrega como <code>listener</code> en el evento 'timeout' del objeto de respuesta.</dd>
+                <dt><code>response.setHeader(name, value)</code></dt>
+                <dd>Establece un único valor de cabecera para las cabeceras implícitas. Si esta cabecera ya existe en las cabeceras a enviar, su valor será reemplazado. Usá un array de cadenas aquí si necesitás enviar múltiples cabeceras con el mismo nombre.</dd>
+                <dt><code>response.getHeader(name)</code></dt>
+                <dd>Lee una cabecera que ya ha sido encolada pero no enviada al cliente. Tené en cuenta que el nombre no distingue entre mayúsculas y minúsculas.</dd>
+                <dt><code>response.removeHeader(name)</code></dt>
+                <dd>Elimina una cabecera que está encolada para envío implícito.</dd>
+                <dt><code>response.addTrailers(headers)</code></dt>
+                <dd>Este método agrega cabeceras HTTP finales (una cabecera pero al final del mensaje) a la respuesta.</dd>
+                <dt><code>response.end([data], [encoding])</code></dt>
+                <dd>Este método le indica al servidor que todas las cabeceras y el cuerpo de la respuesta han sido enviados; que el servidor debe considerar este mensaje como completo. El método, <code>response.end()</code>, DEBE ser llamado en cada respuesta.</dd>
+                <dt><code>response.statusCode</code></dt>
+                <dd>Cuando se usan cabeceras implícitas (sin llamar a <code>response.writeHead()</code> explícitamente), esta propiedad controla el código de estado que se enviará al cliente cuando se envíen las cabeceras.</dd>
+                <dt><code>response.headersSent</code></dt>
+                <dd>Booleano (solo lectura). <code>true</code> si las cabeceras fueron enviadas, <code>false</code> en caso contrario.</dd>
+                <dt><code>response.sendDate</code></dt>
+                <dd>Cuando es <code>true</code>, la cabecera <code>Date</code> se generará y enviará automáticamente en la respuesta si no está ya presente en las cabeceras. Por defecto es <code>true</code>.</dd>
+                <dt><code>response.on('close', function () { })</code></dt>
+                <dd>Indica que la conexión subyacente se terminó antes de que <code>response.end()</code> fuera llamado o pudiera completarse.</dd>
+                <dt><code>response.on('finish', function() { })</code></dt>
+                <dd>Se emite cuando la respuesta ha sido enviada.</dd>
+            </dl>
+
+            <h3 class="sub-header">http.IncomingMessage</h3>
+            <dl>
+                <dt><code>message.httpVersion</code></dt>
+                <dd>En caso de una petición de servidor, la versión HTTP enviada por el cliente. En el caso de una respuesta de cliente, la versión HTTP del servidor al que se conectó.</dd>
+                <dt><code>message.headers</code></dt>
+                <dd>El objeto de cabeceras de la petición/respuesta.</dd>
+                <dt><code>message.trailers</code></dt>
+                <dd>El objeto de <code>trailers</code> (cabeceras finales) de la petición/respuesta. Solo se llena después del evento 'end'.</dd>
+                <dt><code>message.method</code></dt>
+                <dd>El método de la petición como una cadena. Solo lectura. Ejemplo: 'GET', 'DELETE'.</dd>
+                <dt><code>message.url</code></dt>
+                <dd>Cadena de la URL de la petición. Contiene solo la URL que está presente en la petición HTTP real.</dd>
+                <dt><code>message.statusCode</code></dt>
+                <dd>El código de estado de respuesta HTTP de 3 dígitos. Ej. 404.</dd>
+                <dt><code>message.socket</code></dt>
+                <dd>El objeto <code>net.Socket</code> asociado con la conexión.</dd>
+                <dt><code>message.setTimeout(msecs, callback)</code></dt>
+                <dd>Llama a <code>message.connection.setTimeout(msecs, callback)</code>.</dd>
+            </dl>
+        </section>
+
+        <section id="url">
+            <div class="section-header">
+                <h2>URL</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/url.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/url.html</a></p>
+            <p class="note">Nota: Esta es la API "Legacy" (heredada) de Node.js. Para código nuevo, se recomienda usar la API global <code>URL</code> y <code>URLSearchParams</code> (estándar de WHATWG), que no requieren <code>require()</code> y son más modernas y potentes.</p>
+            <p class="description">Este módulo tiene utilidades para la resolución y el <code>parsing</code> (análisis) de URLs. Hacé <code>require('url')</code> para usarlo.</p>
+            <dl>
+                <dt><code>url.parse(urlStr, [parseQueryString], [slashesDenoteHost])</code></dt>
+                <dd>Toma una cadena de URL y devuelve un objeto.</dd>
+                <dt><code>url.format(urlObj)</code></dt>
+                <dd>Toma un objeto de URL parseado y devuelve una cadena de URL formateada.</dd>
+                <dt><code>url.resolve(from, to)</code></dt>
+                <dd>Toma una URL base y una URL <code>href</code>, y las resuelve como lo haría un navegador para una etiqueta de anclaje.</dd>
+            </dl>
+        </section>
+
+        <section id="query-string">
+            <div class="section-header">
+                <h2>QUERY STRING</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/querystring.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/querystring.html</a></p>
+            <p class="note">Nota: Este módulo es la API "Legacy" (heredada). Para código nuevo, se recomienda usar la API global <code>URLSearchParams</code> (estándar de WHATWG), que es más moderna y no requiere <code>require()</code>.</p>
+            <p class="description">Este módulo provee utilidades para trabajar con <code>query strings</code>. Hacé <code>require('querystring')</code> para usarlo.</p>
+            <dl>
+                <dt><code>querystring.stringify(obj, [sep], [eq])</code></dt>
+                <dd>Serializa un objeto a un <code>query string</code>. Opcionalmente, se pueden anular los caracteres separadores ('&') y de asignación ('=') predeterminados.</dd>
+                <dt><code>querystring.parse(str, [sep], [eq], [options])</code></dt>
+                <dd>Deserializa un <code>query string</code> a un objeto. Opcionalmente, se pueden anular los caracteres separadores ('&') y de asignación ('=') predeterminados.</dd>
+            </dl>
+        </section>
+
+        <section id="assert">
+            <div class="section-header">
+                <h2>ASSERT</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/assert.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/assert.html</a></p>
+            <p class="description">Este módulo se usa para escribir tests unitarios para tus aplicaciones, podés acceder a él con <code>require('assert')</code>.</p>
+            <dl>
+                <dt><code>assert.fail(actual, expected, message, operator)</code></dt>
+                <dd>Lanza una excepción que muestra los valores de <code>actual</code> y <code>expected</code> separados por el operador proporcionado.</dd>
+                <dt><code>assert(value, message); assert.ok(value, [message])</code></dt>
+                <dd>Prueba si <code>value</code> es <code>truthy</code> (verdadero en un contexto booleano), es equivalente a <code>assert.equal(true, !!value, message);</code>.</dd>
+                <dt><code>assert.equal(actual, expected, [message])</code></dt>
+                <dd>Prueba la igualdad superficial y coercitiva con el operador de comparación de igualdad ( == ).</dd>
+                <dt><code>assert.notEqual(actual, expected, [message])</code></dt>
+                <dd>Prueba la no igualdad superficial y coercitiva con el operador de no igualdad ( != ).</dd>
+                <dt><code>assert.deepEqual(actual, expected, [message])</code></dt>
+                <dd>Prueba la igualdad profunda.</dd>
+                <dt><code>assert.notDeepEqual(actual, expected, [message])</code></dt>
+                <dd>Prueba cualquier desigualdad profunda.</dd>
+                <dt><code>assert.strictEqual(actual, expected, [message])</code></dt>
+                <dd>Prueba la igualdad estricta, según lo determinado por el operador de igualdad estricta ( === ).</dd>
+                <dt><code>assert.notStrictEqual(actual, expected, [message])</code></dt>
+                <dd>Prueba la no igualdad estricta, según lo determinado por el operador de no igualdad estricta ( !== ).</dd>
+                <dt><code>assert.throws(block, [error], [message])</code></dt>
+                <dd>Espera que <code>block</code> lance un error. <code>error</code> puede ser un constructor, una RegExp o una función de validación.</dd>
+                <dt><code>assert.doesNotThrow(block, [message])</code></dt>
+                <dd>Espera que <code>block</code> no lance un error, ver <code>assert.throws</code> para más detalles.</dd>
+                <dt><code>assert.ifError(value)</code></dt>
+                <dd>Prueba si <code>value</code> no es un valor falso, lanza un error si es un valor verdadero. Útil al probar el primer argumento, <code>error</code>, en los <code>callbacks</code>.</dd>
+            </dl>
+        </section>
+
+        <section id="os">
+            <div class="section-header">
+                <h2>OS</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/os.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/os.html</a></p>
+            <p class="description">Provee algunas funciones de utilidad básicas relacionadas con el sistema operativo. Usá <code>require('os')</code> para acceder a este módulo.</p>
+            <dl>
+                <dt><code>os.tmpdir()</code></dt>
+                <dd>Devuelve el directorio predeterminado del sistema operativo para archivos temporales.</dd>
+                <dt><code>os.endianness()</code></dt>
+                <dd>Devuelve el <code>endianness</code> (orden de bytes) de la CPU. Los valores posibles son "BE" o "LE".</dd>
+                <dt><code>os.hostname()</code></dt>
+                <dd>Devuelve el nombre de host del sistema operativo.</dd>
+                <dt><code>os.type()</code></dt>
+                <dd>Devuelve el nombre del sistema operativo.</dd>
+                <dt><code>os.platform()</code></dt>
+                <dd>Devuelve la plataforma del sistema operativo.</dd>
+                <dt><code>os.arch()</code></dt>
+                <dd>Devuelve la arquitectura de la CPU del sistema operativo.</dd>
+                <dt><code>os.release()</code></dt>
+                <dd>Devuelve la versión del sistema operativo.</dd>
+                <dt><code>os.uptime()</code></dt>
+                <dd>Devuelve el tiempo de actividad del sistema en segundos.</dd>
+                <dt><code>os.loadavg()</code></dt>
+                <dd>Devuelve un array que contiene los promedios de carga de 1, 5 y 15 minutos.</dd>
+                <dt><code>os.totalmem()</code></dt>
+                <dd>Devuelve la cantidad total de memoria del sistema en bytes.</dd>
+                <dt><code>os.freemem()</code></dt>
+                <dd>Devuelve la cantidad de memoria libre del sistema en bytes.</dd>
+                <dt><code>os.cpus()</code></dt>
+                <dd>Devuelve un array de objetos que contienen información sobre cada CPU/núcleo instalado: modelo, velocidad (en MHz) y tiempos (un objeto que contiene el número de milisegundos que la CPU/núcleo pasó en: <code>user</code>, <code>nice</code>, <code>sys</code>, <code>idle</code> e <code>irq</code>).</dd>
+                <dt><code>os.networkInterfaces()</code></dt>
+                <dd>Obtiene una lista de interfaces de red.</dd>
+                <dt><code>os.EOL</code></dt>
+                <dd>Una constante que define el marcador de fin de línea apropiado para el sistema operativo.</dd>
+            </dl>
+        </section>
+
+        <section id="buffer">
+            <div class="section-header">
+                <h2>BUFFER</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="http://nodejs.org/api/buffer.html" target="_blank" rel="noopener noreferrer">http://nodejs.org/api/buffer.html</a></p>
+            <p class="description"><code>Buffer</code> se usa para manejar datos binarios. Es similar a un array de enteros pero corresponde a una asignación de memoria cruda fuera del <code>heap</code> de V8.</p>
+            <dl>
+                <dt><code>Buffer.from(size)</code></dt>
+                <dd>Asigna un nuevo <code>buffer</code> de <code>size</code> octetos.</dd>
+                <dt><code>Buffer.from(array)</code></dt>
+                <dd>Asigna un nuevo <code>buffer</code> usando un array de octetos.</dd>
+                <dt><code>Buffer.from(str, [encoding])</code></dt>
+                <dd>Asigna un nuevo <code>buffer</code> que contiene la cadena <code>str</code> dada. <code>encoding</code> por defecto es 'utf8'.</dd>
+                <dt><code>Buffer.isEncoding(encoding)</code></dt>
+                <dd>Devuelve <code>true</code> si <code>encoding</code> es un argumento de codificación válido, o <code>false</code> en caso contrario.</dd>
+                <dt><code>Buffer.isBuffer(obj)</code></dt>
+                <dd>Prueba si <code>obj</code> es un <code>Buffer</code>.</dd>
+                <dt><code>Buffer.concat(list, [totalLength])</code></dt>
+                <dd>Devuelve un <code>buffer</code> que es el resultado de concatenar todos los <code>buffers</code> de la lista.</dd>
+                <dt><code>Buffer.byteLength(string, [encoding])</code></dt>
+                <dd>Devuelve la longitud real en bytes de una cadena.</dd>
+                <dt><code>buf.write(string, [offset], [length], [encoding])</code></dt>
+                <dd>Escribe <code>string</code> en el <code>buffer</code> en la posición <code>offset</code> usando la codificación dada.</dd>
+                <dt><code>buf.toString([encoding], [start], [end])</code></dt>
+                <dd>Decodifica y devuelve una cadena a partir de los datos del <code>buffer</code> codificados con <code>encoding</code> (por defecto 'utf8') comenzando en <code>start</code> (por defecto 0) y terminando en <code>end</code> (por defecto <code>buffer.length</code>).</dd>
+                <dt><code>buf.toJSON()</code></dt>
+                <dd>Devuelve una representación JSON de la instancia de <code>Buffer</code>, que es idéntica a la salida para los Arrays JSON.</dd>
+                <dt><code>buf.copy(targetBuffer, [targetStart], [sourceStart], [sourceEnd])</code></dt>
+                <dd>Realiza una copia entre <code>buffers</code>. Las regiones de origen y destino pueden superponerse.</dd>
+                <dt><code>buf.slice([start], [end])</code></dt>
+                <dd>Devuelve un nuevo <code>buffer</code> que hace referencia a la misma memoria que el antiguo, pero desplazado y recortado por los índices <code>start</code> (por defecto 0) y <code>end</code> (por defecto <code>buffer.length</code>). Los índices negativos comienzan desde el final del <code>buffer</code>.</dd>
+                <dt><code>buf.fill(value, [offset], [end])</code></dt>
+                <dd>Rellena el <code>buffer</code> con el valor especificado.</dd>
+                <dt><code>buf[index]</code></dt>
+                <dd>Obtiene y establece el octeto en el índice <code>index</code>.</dd>
+                <dt><code>buf.length</code></dt>
+                <dd>El tamaño del <code>buffer</code> en bytes. Tené en cuenta que no es necesariamente el tamaño del contenido.</dd>
+                <dt><code>buffer.INSPECT_MAX_BYTES</code></dt>
+                <dd>Cuántos bytes se devolverán cuando se llame a <code>buffer.inspect()</code>. Esto puede ser anulado por módulos de usuario.</dd>
+            </dl>
+        </section>
+
+        <section id="npm">
+            <div class="section-header">
+                <h2>NPM (Node Package Manager)</h2>
+                <a href="#index-nav" class="back-to-top" title="Volver al índice">↑</a>
+            </div>
+            <p class="api-link"><a href="https://docs.npmjs.com/" target="_blank" rel="noopener noreferrer">https://docs.npmjs.com/</a></p>
+            <p class="description">NPM es el gestor de paquetes por defecto para Node.js. Se utiliza para instalar, compartir y gestionar las dependencias de un proyecto.</p>
+            <dl>
+                <dt><code>npm init [-y]</code></dt>
+                <dd>Inicia un nuevo proyecto de Node.js, creando un archivo <code>package.json</code>. La bandera <code>-y</code> (o <code>--yes</code>) acepta todas las opciones por defecto.</dd>
+                <dt><code>npm install &lt;paquete&gt;</code></dt>
+                <dd>Instala un paquete en el proyecto. Se agregará a la carpeta <code>node_modules</code> y se registrará como una dependencia en <code>package.json</code>. Alias: <code>npm i</code>.</dd>
+                <dt><code>npm install &lt;paquete&gt; --save-dev</code></dt>
+                <dd>Instala un paquete como una dependencia de desarrollo (ej: herramientas de testing, linters). Se agrega a <code>devDependencies</code> en <code>package.json</code>. Alias: <code>npm i -D</code>.</dd>
+                <dt><code>npm install &lt;paquete&gt; -g</code></dt>
+                <dd>Instala un paquete de forma global en el sistema, para que pueda ser usado como una herramienta de línea de comandos.</dd>
+                <dt><code>npm install</code></dt>
+                <dd>Instala todas las dependencias listadas en el <code>package.json</code> del proyecto actual. Se usa al clonar un repositorio. Alias: <code>npm i</code>.</dd>
+                <dt><code>npm uninstall &lt;paquete&gt;</code></dt>
+                <dd>Desinstala un paquete del proyecto y lo elimina del <code>package.json</code>. Alias: <code>npm un</code>.</dd>
+                <dt><code>npm update</code></dt>
+                <dd>Actualiza todas las dependencias del proyecto a sus últimas versiones permitidas según el <code>package.json</code>.</dd>
+                <dt><code>npm run &lt;script&gt;</code></dt>
+                <dd>Ejecuta un script definido en la sección <code>"scripts"</code> del <code>package.json</code>. Por ejemplo, <code>npm run test</code>.</dd>
+                <dt><code>npm list</code></dt>
+                <dd>Muestra un árbol con todas las dependencias instaladas en el proyecto.</dd>
+                <dt><code>npm publish</code></dt>
+                <dd>Publica un paquete en el registro de NPM (requiere estar logueado con <code>npm login</code>).</dd>
+            </dl>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p>
+        Basado en el cheatsheet de <a href="https://github.com/LeCoupa/awesome-cheatsheets/blob/master/backend/node.js" target="_blank" rel="noopener noreferrer">awesome-cheatsheets</a>.
+        <br>
+        Curado y diseñado por <a href="https://github.com/elmoteroloco" target="_blank" rel="noopener noreferrer">elmoteroloco</a>.
+    </p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleIcon = document.getElementById('theme-toggle-icon');
+        const pdfDownloadLink = document.getElementById('pdf-download');
+
+        const applyTheme = (theme) => {
+            const isDark = theme === 'dark';
+            document.documentElement.classList.toggle('dark-mode', isDark);
+            themeToggleIcon.textContent = isDark ? '☼' : '☾';
+            pdfDownloadLink.href = isDark ? './Node.js Cheat Sheet - oscuro.pdf' : './Node.js Cheat Sheet - claro.pdf';
+            pdfDownloadLink.download = pdfDownloadLink.href.split('/').pop();
+        };
+
+        themeToggleBtn.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // Carga inicial del tema
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
+    });
+</script>
+</body>
+</html>
