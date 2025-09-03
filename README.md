@@ -12,3 +12,14 @@ También podés descargar los archivos PDF directamente desde este repositorio:
 
 - [Versión Clara](./Node.js%20Cheat%20Sheet%20-%20claro.pdf)
 - [Versión Oscura](./Node.js%20Cheat%20Sheet%20-%20oscuro.pdf)
+
+## 🛠️ Tecnologías Utilizadas
+
+La página de presentación es un sitio estático simple construido con:
+
+*   HTML5
+*   CSS3
+
+## 📜 Licencia
+
+El contenido de este repositorio se distribuye bajo la Licencia MIT.
