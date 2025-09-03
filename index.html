@@ -698,7 +698,7 @@ module.exports = function(width) {
                 <dt><code>readable.pipe(destination, [options])</code></dt>
                 <dd>Este método extrae todos los datos de un <code>stream</code> de lectura y los escribe en el destino proporcionado, gestionando automáticamente el flujo para que el destino no se vea abrumado por un <code>stream</code> de lectura rápido.</dd>
                 <dt><code>readable.unpipe([destination])</code></dt>
-                <dd>Este método eliminará los "ganchos" configurados por una llamada <code>pipe()</code> anterior. Si no se especifica el destino, se eliminan todas las tuberías (<code>pipes</code>).</dd>
+                <dd>Este método eliminará los "hooks" configurados por una llamada <code>pipe()</code> anterior. Si no se especifica el destino, se eliminan todos los canales (<code>pipes</code>).</dd>
                 <dt><code>readable.unshift(chunk)</code></dt>
                 <dd>Esto es útil en ciertos casos en los que un <code>stream</code> está siendo consumido por un <code>parser</code>, que necesita "des-consumir" algunos datos que ha extraído de forma optimista de la fuente, para que el <code>stream</code> pueda pasarse a otra parte.</dd>
             </dl>
@@ -948,9 +948,9 @@ module.exports = function(width) {
                 <dt><code>server.close([callback])</code></dt>
                 <dd>Impide que el servidor acepte nuevas conexiones.</dd>
                 <dt><code>server.setTimeout(msecs, callback)</code></dt>
-                <dd>Establece el valor de tiempo de espera para los <code>sockets</code> y emite un evento 'timeout' en el objeto <code>Server</code>, pasando el <code>socket</code> como argumento, si ocurre un tiempo de espera.</dd>
+                <dd>Establece el valor de tiempo de espera para los <code>sockets</code> y emite un evento 'timeout' en el objeto <code>Server</code>, pasando el <code>socket</code> como argumento, si ocurre un timeout.</dd>
                 <dt><code>server.maxHeadersCount</code></dt>
-                <dd>Limita el número máximo de cabeceras entrantes, por defecto es 1000. Si se establece en 0, no se aplicará ningún límite.</dd>
+                <dd>Limita el número máximo de headers entrantes, por defecto es 1000. Si se establece en 0, no se aplicará ningún límite.</dd>
                 <dt><code>server.timeout</code></dt>
                 <dd>El número de milisegundos de inactividad antes de que se presuma que un <code>socket</code> ha expirado.</dd>
             </dl>
@@ -962,7 +962,7 @@ module.exports = function(width) {
                 <dt><code>server.on('connection', function (socket) { })</code></dt>
                 <dd>Cuando se establece una nueva conexión TCP.</dd>
                 <dt><code>server.on('close', function () { })</code></dt>
-                <dd>Se emite cuando el servidor se cierra.</dd>
+                <dd>Se emite cuando el server se cierra.</dd>
                 <dt><code>server.on('checkContinue', function (request, response) { })</code></dt>
                 <dd>Se emite cada vez que se recibe una petición con un <code>http Expect: 100-continue</code>.</dd>
                 <dt><code>server.on('connect', function (request, socket, head) { })</code></dt>
@@ -976,7 +976,7 @@ module.exports = function(width) {
             <h3 class="sub-header">http.ClientRequest</h3>
             <dl>
                 <dt><code>request.write(chunk, [encoding])</code></dt>
-                <dd>Envía un trozo del cuerpo.</dd>
+                <dd>Envía una parte (chunk) del cuerpo (body) de la petición (request).</dd>
                 <dt><code>request.end([data], [encoding])</code></dt>
                 <dd>Finaliza el envío de la petición. Si alguna parte del cuerpo no se ha enviado, la enviará al <code>stream</code>.</dd>
                 <dt><code>request.abort()</code></dt>
@@ -998,7 +998,7 @@ module.exports = function(width) {
                 <dt><code>request.on('connect', function(response, socket, head) { })</code></dt>
                 <dd>Se emite cada vez que un servidor responde a una petición con un método CONNECT. Si no se escucha este evento, las conexiones de los clientes que reciban un método CONNECT se cerrarán.</dd>
                 <dt><code>request.on('upgrade', function(response, socket, head) { })</code></dt>
-                <dd>Se emite cada vez que un servidor responde a una petición con una actualización. Si no se escucha este evento, las conexiones de los clientes que reciban una cabecera de actualización se cerrarán.</dd>
+                <dd>Se emite cada vez que un servidor responde a una petición con una actualización. Si no se escucha este evento, las conexiones de los clientes que reciban un <code>header</code> de actualización se cerrarán.</dd>
                 <dt><code>request.on('continue', function() { })</code></dt>
                 <dd>Se emite cuando el servidor envía una respuesta HTTP '100 Continue', generalmente porque la petición contenía 'Expect: 100-continue'. Esta es una instrucción para que el cliente envíe el cuerpo de la petición.</dd>
             </dl>
@@ -1014,21 +1014,21 @@ module.exports = function(width) {
                 <dt><code>response.setTimeout(msecs, callback)</code></dt>
                 <dd>Establece el valor de tiempo de espera del <code>Socket</code> en <code>msecs</code>. Si se proporciona un <code>callback</code>, se agrega como <code>listener</code> en el evento 'timeout' del objeto de respuesta.</dd>
                 <dt><code>response.setHeader(name, value)</code></dt>
-                <dd>Establece un único valor de cabecera para las cabeceras implícitas. Si esta cabecera ya existe en las cabeceras a enviar, su valor será reemplazado. Usá un array de cadenas aquí si necesitás enviar múltiples cabeceras con el mismo nombre.</dd>
+                <dd>Establece un único valor de header para los headers implícitos. Si este ya existe en los headers a enviar, su valor será reemplazado. Usá un array de cadenas aquí si necesitás enviar múltiples headers con el mismo nombre.</dd>
                 <dt><code>response.getHeader(name)</code></dt>
-                <dd>Lee una cabecera que ya ha sido encolada pero no enviada al cliente. Tené en cuenta que el nombre no distingue entre mayúsculas y minúsculas.</dd>
+                <dd>Lee un header que ya se puso en la cola pero no fue enviado al cliente. Tené en cuenta que el nombre no distingue entre mayúsculas y minúsculas.</dd>
                 <dt><code>response.removeHeader(name)</code></dt>
-                <dd>Elimina una cabecera que está encolada para envío implícito.</dd>
+                <dd>Elimina una header que está en la cola de envío implícito.</dd>
                 <dt><code>response.addTrailers(headers)</code></dt>
-                <dd>Este método agrega cabeceras HTTP finales (una cabecera pero al final del mensaje) a la respuesta.</dd>
+                <dd>Este método agrega headers HTTP finales (un header... pero al final del mensaje) a la respuesta.</dd>
                 <dt><code>response.end([data], [encoding])</code></dt>
-                <dd>Este método le indica al servidor que todas las cabeceras y el cuerpo de la respuesta han sido enviados; que el servidor debe considerar este mensaje como completo. El método, <code>response.end()</code>, DEBE ser llamado en cada respuesta.</dd>
+                <dd>Este método le indica al servidor que todos los headers y el cuerpo de la respuesta han sido enviados; que el servidor debe considerar este mensaje como completo. El método, <code>response.end()</code>, DEBE ser llamado en cada respuesta.</dd>
                 <dt><code>response.statusCode</code></dt>
-                <dd>Cuando se usan cabeceras implícitas (sin llamar a <code>response.writeHead()</code> explícitamente), esta propiedad controla el código de estado que se enviará al cliente cuando se envíen las cabeceras.</dd>
+                <dd>Cuando se usan headers implícitos (sin llamar a <code>response.writeHead()</code> explícitamente), esta propiedad controla el código de estado que se enviará al cliente cuando se envíen esos headers.</dd>
                 <dt><code>response.headersSent</code></dt>
-                <dd>Booleano (solo lectura). <code>true</code> si las cabeceras fueron enviadas, <code>false</code> en caso contrario.</dd>
+                <dd>Booleano (solo lectura). <code>true</code> si los headers fueron enviados, <code>false</code> en caso contrario.</dd>
                 <dt><code>response.sendDate</code></dt>
-                <dd>Cuando es <code>true</code>, la cabecera <code>Date</code> se generará y enviará automáticamente en la respuesta si no está ya presente en las cabeceras. Por defecto es <code>true</code>.</dd>
+                <dd>Cuando es <code>true</code>, el header <code>Date</code> se generará y enviará automáticamente en la respuesta (si no está presente entre los headers). Por defecto es <code>true</code>.</dd>
                 <dt><code>response.on('close', function () { })</code></dt>
                 <dd>Indica que la conexión subyacente se terminó antes de que <code>response.end()</code> fuera llamado o pudiera completarse.</dd>
                 <dt><code>response.on('finish', function() { })</code></dt>
@@ -1040,9 +1040,9 @@ module.exports = function(width) {
                 <dt><code>message.httpVersion</code></dt>
                 <dd>En caso de una petición de servidor, la versión HTTP enviada por el cliente. En el caso de una respuesta de cliente, la versión HTTP del servidor al que se conectó.</dd>
                 <dt><code>message.headers</code></dt>
-                <dd>El objeto de cabeceras de la petición/respuesta.</dd>
+                <dd>El objeto <code>headers</code> de la petición/respuesta.</dd>
                 <dt><code>message.trailers</code></dt>
-                <dd>El objeto de <code>trailers</code> (cabeceras finales) de la petición/respuesta. Solo se llena después del evento 'end'.</dd>
+                <dd>El objeto de <code>trailers</code> (headers finales) de la petición/respuesta. Solo se llena después del evento 'end'.</dd>
                 <dt><code>message.method</code></dt>
                 <dd>El método de la petición como una cadena. Solo lectura. Ejemplo: 'GET', 'DELETE'.</dd>
                 <dt><code>message.url</code></dt>
@@ -1070,7 +1070,7 @@ module.exports = function(width) {
                 <dt><code>url.format(urlObj)</code></dt>
                 <dd>Toma un objeto de URL parseado y devuelve una cadena de URL formateada.</dd>
                 <dt><code>url.resolve(from, to)</code></dt>
-                <dd>Toma una URL base y una URL <code>href</code>, y las resuelve como lo haría un navegador para una etiqueta de anclaje.</dd>
+                <dd>Toma una URL base y una URL <code>href</code>, y las resuelve como lo haría un navegador para una 'anchor tag'.</dd>
             </dl>
         </section>
 
