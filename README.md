@@ -21,7 +21,7 @@ La página de presentación es un sitio estático simple construido con:
 *    CSS3
 *    Inteligencia Artificial
 
-![HTML5](./iconos/brand-html5.svg) ![CSS3](./iconos/brand-css3.svg) ![AI](./iconos/ai.svg)
+![HTML5](./iconos/brand-html5.svg) ![CSS3](./iconos/brand-css3.svg) ![AI](./iconos/ai.svg#gh-dark-mode-only)
 
 ## ![Acreditación](./iconos/mood-edit.svg) Acreditación
 
